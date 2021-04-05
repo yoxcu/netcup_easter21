@@ -128,25 +128,27 @@ def scan():
         print("https://www.netcup.de/bestellen/produkt.php?produkt=" + str(response_json["eggs"][0]["product_id"]) + "&hiddenkey="+ str(response_json["eggs"][0]["product_key"]))
         print("----------")
     print("DONE!")
-    if len(eggs) > 0 and send_mail:
-        print("SENDING MAIL")
-        msg="Found {} Netcup Eggs:\n".format(len(eggs))
-        for egg in eggs:
-            msg+="{}: {} on {}\n".format(*egg)
-        msg = MIMEText(msg)
-        # me == the sender's email address
-        # you == the recipient's email address
-        msg['Subject'] = 'Found Netcup Eggs'
-        msg['From'] = me
-        msg['To'] = you
+    if len(eggs) > 0:
+        print("\007") #play notification sound
+        if (send_mail):
+            print("SENDING MAIL")
+            msg="Found {} Netcup Eggs:\n".format(len(eggs))
+            for egg in eggs:
+                msg+="{}: {} on {}\n".format(*egg)
+            msg = MIMEText(msg)
+            # me == the sender's email address
+            # you == the recipient's email address
+            msg['Subject'] = 'Found Netcup Eggs'
+            msg['From'] = me
+            msg['To'] = you
 
-        # Send the message via our own SMTP server, but don't include the
-        # envelope header.
-        s = smtplib.SMTP_SSL(smtp_ssl_server)
-        s.login(mail_user,mail_pw)
-        s.sendmail(me, [you], msg.as_string())
-        s.quit()
-        print("MAIL SENT!")
+            # Send the message via our own SMTP server, but don't include the
+            # envelope header.
+            s = smtplib.SMTP_SSL(smtp_ssl_server)
+            s.login(mail_user,mail_pw)
+            s.sendmail(me, [you], msg.as_string())
+            s.quit()
+            print("MAIL SENT!")
     print("===========================")
 
 schedule.every().hour.at("00:10").do(scan)
